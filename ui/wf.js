@@ -22,8 +22,16 @@
 
                 $scope.deps = [];
 
-                load();
-                var t = $interval(load, 1000);
+                start_loading();
+                var t = null;
+                function start_loading() {
+                    load();
+                    t = $interval(load, 1000);
+                }
+                function stop_loading() {
+                    if(t) $interval.cancel(t); 
+                    t = null;
+                }
 
                 function load() {
                     $http.get($scope.conf.sca_api+'/task/', {params: {
@@ -33,7 +41,7 @@
                         $scope.task = res.data[0];
                         var status = $scope.task.status;
                         if(status == "finished" || status == "failed" || status == "stopped") {
-                            $interval.cancel(t); 
+                            stop_loading();
                         }
 
                         if(status == "finished") {
@@ -55,7 +63,7 @@
                     });
                 }
                 $scope.$on("$destroy", function(event) {
-                        $interval.cancel(t);
+                    stop_loading();
                 });
 
                 /*
@@ -70,6 +78,7 @@
                     $http.put($scope.conf.sca_api+"/task/stop/"+$scope.task._id)
                     .then(function(res) {
                         toaster.success("Requested to stop this task");
+                        stop_loading();
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
                         else toaster.error(res.statusText);
@@ -80,7 +89,7 @@
                     $http.put($scope.conf.sca_api+"/task/rerun/"+$scope.task._id)
                     .then(function(res) {
                         toaster.success("Requested to rerun this task");
-                        load();
+                        start_loading();
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
                         else toaster.error(res.statusText);

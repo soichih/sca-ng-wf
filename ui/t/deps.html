@@ -1,0 +1,51 @@
+
+<div ng-repeat="dep in deps">
+    <h3>{{dep.service_id}}</h3>
+
+    <a href="{{conf.progress_url}}/#/detail/{{dep.progress_key}}" target="{{dep.progress_key}}" class="pull-right">
+        <small>Progress</small>
+    </a>
+
+    <h4>
+        <i class="fa fa-spinner fa-pulse" ng-if="dep.status == 'running' || dep.status == 'running_sync'"></i>
+        {{dep.status|uppercase}}
+        <small>{{dep.status_msg}}</small>
+    </h4>
+
+    <pre style="font-size: 50%;">TODO(config) {{dep.config|json}}</pre>
+    <center style="font-size: 30pt"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></center>
+</div>
+
+<div>
+    <h3>{{task.service_id}}</h3>
+
+    <a href="{{conf.progress_url}}/#/detail/{{task.progress_key}}" target="{{task.progress_key}}" class="pull-right">
+        <small>Progress</small>
+    </a>
+
+    <h4>
+        <i class="fa fa-spinner fa-pulse" ng-if="task.status == 'running' || dep.status == 'running_sync'"></i>
+        {{task.status|uppercase}}
+        <small>{{task.status_msg}}</small>
+    </h4>
+
+    <div>
+        <button type="button" class="btn btn-sm btn-danger" ng-click="stop()"
+            ng-if="task.status == 'running' || task.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
+        </button>
+        <button type="button" class="btn btn-sm btn-warning" ng-click="rerun()"
+            ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
+            <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
+        </button>
+    </div>
+
+    <hr>
+    <b>debug</b>
+    <pre style="font-size: 50%;">TODO(config) {{task.config|json}}</pre>
+    <pre style="font-size: 50%;">TODO(products) {{task.products|json}}</pre>
+</div>
+
+<!--
+<pre>{{_deps|json}}</pre>
+<pre>{{task|json}}</pre>
+-->

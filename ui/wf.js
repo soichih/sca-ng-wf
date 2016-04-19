@@ -23,17 +23,20 @@
                 $scope.deps = [];
 
                 start_loading();
-                var t = null;
+                var t;
                 function start_loading() {
+                    console.log("start_loading");
                     load();
                     t = $interval(load, 1000);
                 }
                 function stop_loading() {
-                    if(t) $interval.cancel(t); 
+                    console.log("stop_loading");
+                    $interval.cancel(t); 
                     t = null;
                 }
 
                 function load() {
+                    console.log("loading..");
                     $http.get($scope.conf.sca_api+'/task/', {params: {
                         where: {_id: $scope.taskid},
                     }})
@@ -63,6 +66,7 @@
                     });
                 }
                 $scope.$on("$destroy", function(event) {
+                    console.log("destroying..");
                     stop_loading();
                 });
 

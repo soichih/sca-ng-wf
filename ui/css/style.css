@@ -1,0 +1,29 @@
+sca-wf-taskdeps .task {
+  position: relative;
+}
+sca-wf-taskdeps .task-circle {
+  font-size: 40pt;
+  position: absolute;
+  color: #ccc;
+  left: -2px;
+  top: -10px;
+}
+sca-wf-taskdeps h3 {
+  margin-top: 5px;
+}
+sca-wf-taskdeps .task-header {
+  margin-left: 20px;
+  padding-left: 40px;
+}
+sca-wf-taskdeps .task-body {
+  margin-left: 20px;
+  padding-left: 40px;
+  padding-bottom: 10px;
+}
+sca-wf-taskdeps .task-body-dep {
+  border-left: 1px solid #ddd;
+}
+.sca-wf-uploader .file-uploaded:hover {
+  background-color: #eee;
+  cursor: pointer;
+}

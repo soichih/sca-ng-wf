@@ -143,7 +143,7 @@
                 //first find the best resource to upload files to
                 var best_resource = null;
                 $http.get(appconf.sca_api+"/resource/best", {params: {
-                    //service_id: "sca-service-upload",
+                    service_id: "_upload",
                 }})    
                 .then(function(res) {
                     best_resource = res.data;

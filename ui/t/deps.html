@@ -1,27 +1,21 @@
 
-<!--
-<script type="text/ng-template" id="taskcontroller.html">
-    <button type="button" class="btn btn-xs btn-danger" ng-click="stop(dep)"
-        ng-if="dep.status == 'running' || dep.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
-    </button>
-    <button type="button" class="btn btn-xs btn-warning" ng-click="rerun(dep)"
-        ng-if="dep.status == 'failed' || dep.status == 'finished' || dep.status == 'stopped'">
-        <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
-    </button>
-</script>
--->
-
-<!--refactor dep list and task .. which are very similar at the moment-->
+<!--TODO..refactor dep list and task .. which are very similar at the moment-->
 <div ng-repeat="dep in deps" class="task">
     <div class="task-header">
-        <i class="fa fa-circle task-circle" aria-hidden="true" ng-if="dep.status !='finished'"></i>
-        <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-if="dep.status =='finished'"></i>
+        <span ng-switch="dep.status">
+            <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-switch-when="'finished'"></i>
+            <i class="fa fa-spinner fa-pulse task-circle" aria-hidden="true" ng-switch-when="'running'"></i>
+            <i class="fa fa-circle task-circle" aria-hidden="true" ng-switch-default></i>
+        </span>
         <h3>{{dep.service_id}}</h3>
     </div>
     <div class="task-body task-body-dep">
+        <!--
         <a href="{{conf.progress_url}}/#/detail/{{dep.progress_key}}" target="{{dep.progress_key}}" class="pull-right">
             <small>Progress</small>
         </a>
+        -->
+        {{dep._progress|json}}
 
         <h4>
             <i class="fa fa-spinner fa-pulse" ng-if="dep.status == 'running' || dep.status == 'running_sync'"></i>
@@ -46,23 +40,33 @@
 
 <div class="task">
     <div class="task-header">
-        <i class="fa fa-circle task-circle" aria-hidden="true" ng-if="task.status !='finished'"></i>
-        <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-if="task.status =='finished'"></i>
-        <h3>{{task.service_id}}</h3>
+        <span ng-switch="task.status">
+            <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-switch-when="finished"></i>
+            <i class="fa fa-spinner fa-pulse task-circle" aria-hidden="true" ng-switch-when="running"></i>
+            <i class="fa fa-circle task-circle" aria-hidden="true" ng-switch-default></i>
+        </span>
+        <h3>{{task.status|uppercase}} {{task.service_id}}</h3>
     </div>
     <div class="task-body">
 
+        <!--
         <a href="{{conf.progress_url}}/#/detail/{{task.progress_key}}" target="{{task.progress_key}}" class="pull-right">
             <small>Progress</small>
         </a>
+        -->
+        {{task._progress|json}}
 
+        <!--
         <h4>
             <i class="fa fa-spinner fa-pulse" ng-if="task.status == 'running' || dep.status == 'running_sync'"></i>
             {{task.status|uppercase}}
             <small>{{task.status_msg}}</small>
         </h4>
+        -->
+        <p>
+            <small>{{task.status_msg}}</small>
+        </p>
 
-        <!--<ng-include ng-init="dep = task" src="'taskcontroller.html'"></ng-include>-->
         <button type="button" class="btn btn-xs btn-danger" ng-click="stop(task)"
             ng-if="task.status == 'running'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
         </button>
@@ -70,12 +74,10 @@
             ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
             <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
         </button>
+        <button type="button" class="btn btn-xs pull-right" ng-click="show_debug[task._id] = !show_debug[task._id]"><i class="fa fa-eye" aria-hidden="true"></i></b></button>
+        <pre style="font-size: 50%;" ng-if="show_debug[task._id]">{{task|json}}</pre>
     </div>
 </div><!--task-->
-
-<hr>
-<b>DEBUG</b>
-<pre style="font-size: 50%;">TODO(task) {{task|json}}</pre>
 
 <!--
 <pre>{{_deps|json}}</pre>

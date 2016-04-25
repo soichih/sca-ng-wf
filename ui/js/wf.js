@@ -22,6 +22,8 @@
             link: function ($scope, element) {
 
                 $scope.deps = [];
+                $scope.show_debug = {}; //contains task ids to show details
+                $scope.task = {};
 
                 start_loading();
                 var t;
@@ -42,10 +44,15 @@
                         where: {_id: $scope.taskid},
                     }})
                     .then(function(res) {
-                        $scope.task = res.data[0];
+                        //let's not wipte the task each time I load this.. I am injecting _progress and other things, so wiping will cause flickering
+                        //$scope.task = res.data[0];
+                        for(var k in res.data[0]) $scope.task[k] = res.data[0][k];
+
                         var status = $scope.task.status;
                         if(status == "finished" || status == "failed" || status == "stopped") {
                             stop_loading();
+                        } else {
+                            load_progress($scope.task);
                         }
 
                         if(status == "finished") {
@@ -56,6 +63,10 @@
                         $scope.task.deps.forEach(function(dep_taskid, idx) {
                             $http.get($scope.conf.sca_api+'/task/', {params: { where: {_id: dep_taskid} }}).then(function(res) {
                                 $scope.deps[idx] = res.data[0];
+                                var status = res.data[0].status;
+                                if(status != "finished" && status != "failed" && status != "stopped") {
+                                    load_progress(red.data[0]);
+                                }
                             }, function(res) {
                                 if(res.data && res.data.message) toaster.error(res.data.message);
                                 else toaster.error(res.statusText);
@@ -66,8 +77,19 @@
                         else toaster.error(res.statusText);
                     });
                 }
+
+                function load_progress(task) {
+                    $http.get($scope.conf.progress_api+'/status/'+$scope.task.progress_key)
+                    .then(function(res) {
+                        task._progress = res.data; 
+                    }, function(res) {
+                        if(res.data && res.data.message) toaster.error(res.data.message);
+                        else toaster.error(res.statusText);
+                    });
+                }
+
                 $scope.$on("$destroy", function(event) {
-                    console.log("destroying..");
+                    console.log("destroying taskdeps");
                     stop_loading();
                 });
 
@@ -83,7 +105,7 @@
                     $http.put($scope.conf.sca_api+"/task/stop/"+task._id)
                     .then(function(res) {
                         toaster.success("Requested to stop this task");
-                        stop_loading();
+                        //stop_loading();
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
                         else toaster.error(res.statusText);

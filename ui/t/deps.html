@@ -1,13 +1,21 @@
 
-<!--TODO..refactor dep list and task .. which are very similar at the moment-->
-<div ng-repeat="dep in deps" class="task">
+<div ng-repeat="task in tasks" class="task">
+
     <div class="task-header">
-        <span ng-switch="dep.status">
-            <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-switch-when="'finished'"></i>
-            <i class="fa fa-spinner fa-pulse task-circle" aria-hidden="true" ng-switch-when="'running'"></i>
-            <i class="fa fa-circle task-circle" aria-hidden="true" ng-switch-default></i>
+        <span ng-switch="task.status" class="task-status">
+            <i class="fa fa-exclamation fa-fw" aria-hidden="true" ng-switch-when="failed"></i>
+            <i class="fa fa-stop fa-fw" aria-hidden="true" ng-switch-when="stopped"></i>
+            <i class="fa fa-stop fa-fw" aria-hidden="true" ng-switch-when="stop_requested"></i>
+            <i class="fa fa-check fa-fw" aria-hidden="true" ng-switch-when="finished"></i>
+            <i class="fa fa-hourglass-start fa-fw" aria-hidden="true" ng-switch-when="requested"></i>
+            <i class="fa fa-cog fa-spin fa-fw" aria-hidden="true" ng-switch-when="running_sync"></i>
+            <i class="fa fa-cog fa-spin fa-fw" aria-hidden="true" ng-switch-when="running"></i>
+            <i class="fa fa fa-fw" aria-hidden="true" ng-switch-default></i>
         </span>
-        <h3>{{dep.service_id}}</h3>
+        <h4>
+            <small>{{task.status|uppercase}}</small>
+            {{task.service_id}} 
+        </h4>
     </div>
     <div class="task-body task-body-dep">
         <!--
@@ -15,71 +23,48 @@
             <small>Progress</small>
         </a>
         -->
-        {{dep._progress|json}}
+        <div class="row">
+            <div class="col-md-4">
+                <pre style="font-size: 50%;">{{task.config|json}}</pre>
+            </div>
+            <div class="col-md-6"> 
+                <div ng-if="task.status != 'running' || !task._progress">
+                    <small>{{task.status_msg}}</small>
+                </div>
+                <div ng-if="task.status == 'running' && task._progress" class="clickable">
+                    <!--{{task._progress.status|uppercase}}<br>-->
+                    <small>{{task._progress.msg}}</small>
+                </div>
+                <p><small>
+                    <span ng-if="task._progress">
+                        <a href="{{appconf.progress_url}}/#/detail/{{task.progress_key}}" target="{{task.progress_key}}">{{task._progress.progress*100|number}}% Completed</a>
+                        <br>
+                    </span>
+                    <span ng-if="task.request_date"> 
+                        <i class="fa fa-clock-o" aria-hidden="true"></i> Requested at <time>{{task.request_date|date:'short'}}</time> <br></span>
+                    <span ng-if="task.start_date"> 
+                        <i class="fa fa-clock-o" aria-hidden="true"></i> Started at <time>{{task.start_date|date:'short'}}</time> <br></span>
+                    <span ng-if="task.finish_date"> 
+                        <i class="fa fa-clock-o" aria-hidden="true"></i> Finished at <time>{{task.finish_date|date:'short'}}</time> <br></span>
+                </small></p>
+            </div>
+            <div class="col-md-2" class="text-muted"> 
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-xs btn-danger" ng-click="stop(task)"
+                        ng-if="task.status == 'running' || task.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
+                    </button>
+                    <button type="button" class="btn btn-xs" ng-click="rerun(task)"
+                        ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
+                        <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
+                    </button>
+                    <button type="button" class="btn btn-xs" ng-click="task._show = !task._show">
+                        <i class="fa fa-cog" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <h4>
-            <i class="fa fa-spinner fa-pulse" ng-if="dep.status == 'running' || dep.status == 'running_sync'"></i>
-            {{dep.status|uppercase}}
-            <small>{{dep.status_msg}}</small>
-        </h4>
+        <pre style="font-size: 50%;" ng-if="task._show">{{task|json}}</pre>
 
-        <pre style="font-size: 50%;">TODO(config) {{dep.config|json}}</pre>
-        <!--
-        <center style="font-size: 30pt"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></center>
-        -->
-        <!--<ng-include ng-init="dep = dep" src="'taskcontroller.html'"></ng-include>-->
-        <button type="button" class="btn btn-xs btn-danger" ng-click="stop(dep)"
-            ng-if="dep.status == 'running' || dep.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
-        </button>
-        <button type="button" class="btn btn-xs btn-warning" ng-click="rerun(dep)"
-            ng-if="dep.status == 'failed' || dep.status == 'finished' || dep.status == 'stopped'">
-            <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
-        </button>
     </div>
 </div>
-
-<div class="task">
-    <div class="task-header">
-        <span ng-switch="task.status">
-            <i class="fa fa-check-circle task-circle" aria-hidden="true" ng-switch-when="finished"></i>
-            <i class="fa fa-spinner fa-pulse task-circle" aria-hidden="true" ng-switch-when="running"></i>
-            <i class="fa fa-circle task-circle" aria-hidden="true" ng-switch-default></i>
-        </span>
-        <h3>{{task.status|uppercase}} {{task.service_id}}</h3>
-    </div>
-    <div class="task-body">
-
-        <!--
-        <a href="{{conf.progress_url}}/#/detail/{{task.progress_key}}" target="{{task.progress_key}}" class="pull-right">
-            <small>Progress</small>
-        </a>
-        -->
-        {{task._progress|json}}
-
-        <!--
-        <h4>
-            <i class="fa fa-spinner fa-pulse" ng-if="task.status == 'running' || dep.status == 'running_sync'"></i>
-            {{task.status|uppercase}}
-            <small>{{task.status_msg}}</small>
-        </h4>
-        -->
-        <p>
-            <small>{{task.status_msg}}</small>
-        </p>
-
-        <button type="button" class="btn btn-xs btn-danger" ng-click="stop(task)"
-            ng-if="task.status == 'running'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
-        </button>
-        <button type="button" class="btn btn-xs btn-warning" ng-click="rerun(task)"
-            ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
-            <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
-        </button>
-        <button type="button" class="btn btn-xs pull-right" ng-click="show_debug[task._id] = !show_debug[task._id]"><i class="fa fa-eye" aria-hidden="true"></i></b></button>
-        <pre style="font-size: 50%;" ng-if="show_debug[task._id]">{{task|json}}</pre>
-    </div>
-</div><!--task-->
-
-<!--
-<pre>{{_deps|json}}</pre>
-<pre>{{task|json}}</pre>
--->

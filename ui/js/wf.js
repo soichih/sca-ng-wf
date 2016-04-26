@@ -1,111 +1,122 @@
 (function() {
     'use strict';
     var wf = angular.module('sca-wf', [
-        //'sca-shared.menu',
-        //'toaster',
         'ngFileUpload', //for scaWfUploader
+        'toaster',
     ]);
 
-    //displays task status, and if there is any dependencies, it displays that as well
-    //TODO - load progress info
-    //TODO - right now it only supports the end task and its dependencies. I need to support more complex dependencies
-    wf.directive('scaWfTaskdeps', function($http, toaster, $interval) {
+    //load tasks (and progress status) and refreshes preriodically
+    wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
+      
+        //tasks that we are keeping up with
+        var tasks = {};
+
+        function load(taskid) {
+            $http.get(appconf.sca_api+'/task/', {params: {
+                where: {_id: taskid},
+            }}).then(function(res) {
+                var _task = res.data[0];
+                for(var k in _task) tasks[taskid][k] = _task[k]; //do inplace update
+                delete tasks[taskid].loading;
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }
+
+        //reload tasks
+        $interval(function() {
+            //console.dir(tasks);
+            var ids = Object.keys(tasks);
+            var where = {_id: {$in: ids}};
+            $http.get(appconf.sca_api+'/task/', {params: {where: where}}).then(function(res) {
+                res.data.forEach(function(task) {
+                    var taskid = task._id;
+                    for(var k in task) tasks[taskid][k] = task[k]; //do inplace update
+                });
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }, 2500);
+
+        //reload progress
+        $interval(function() {
+            //console.dir(tasks);
+            for(var taskid in tasks) {
+                let task = tasks[taskid];
+
+                if(!task.progress_key) {
+                    //no key, no progress
+                    //task._progress = null;
+                    return; 
+                }
+                if(task.status == "finished" || task.status == "failed" || task.status == "stopped") {
+                    //if finished, no need to load progress
+                    //task._progress = null;
+                    return; 
+                }
+                if(task._progress && task._progress.status == "finished") {
+                    //if finished, no need to load
+                    //task._progress = null; //this causes flickering of task<>progress status because progress tends to finish before task
+                    return; 
+                }
+
+                $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
+                    task._progress = res.data;
+                }, function(res) {
+                    if(res.data && res.data.message) toaster.error(res.data.message);
+                    else toaster.error(res.statusText);
+                });
+            }
+        }, 1000);
+
+        return {
+            get: function(taskid) {
+                if(tasks[taskid]) return tasks[taskid];
+                var task = {loading: true};
+                tasks[taskid] = task;
+                load(taskid);
+                return task;
+            }
+        }
+    });
+
+    //displays task status, and if there is any dependencies, displays that as well
+    wf.directive('scaWfTaskdeps', function(appconf, $http, toaster, $interval, scaTask) {
         return {
             restrict: 'E',
             //transclude: true,
             scope: {
-                conf: '=', //{sca_url: , progress_url}
-                taskid: '=', 
+                taskid: '<', 
             },
             //templateUrl: (scaSharedConfig.shared_url||"../shared")+'/t/menutab.html', 
             templateUrl: 'bower_components/sca-wf/ui/t/deps.html',  //TODO - should make this configurable..
             link: function ($scope, element) {
+                //$scope.show_debug = {}; //contains task ids to show details
+                $scope.task = scaTask.get($scope.taskid);
+                $scope.appconf = appconf;
 
-                $scope.deps = [];
-                $scope.show_debug = {}; //contains task ids to show details
-                $scope.task = {};
-
-                start_loading();
-                var t;
-                function start_loading() {
-                    console.log("start_loading");
-                    load();
-                    t = $interval(load, 2500); //2.5 seconds short enough?
-                }
-                function stop_loading() {
-                    console.log("stop_loading");
-                    $interval.cancel(t); 
-                    t = null;
-                }
-
-                function load() {
-                    console.log("loading..");
-                    $http.get($scope.conf.sca_api+'/task/', {params: {
-                        where: {_id: $scope.taskid},
-                    }})
-                    .then(function(res) {
-                        //let's not wipte the task each time I load this.. I am injecting _progress and other things, so wiping will cause flickering
-                        //$scope.task = res.data[0];
-                        for(var k in res.data[0]) $scope.task[k] = res.data[0][k];
-
-                        var status = $scope.task.status;
-                        if(status == "finished" || status == "failed" || status == "stopped") {
-                            stop_loading();
-                        } else {
-                            load_progress($scope.task);
-                        }
-
-                        if(status == "finished") {
-                            $scope.$emit('task_finished', $scope.task);
-                        }
+                //$scope.resource = null;
+                $scope.tasks = null;
                           
-                        //load all deps tasks
-                        $scope.task.deps.forEach(function(dep_taskid, idx) {
-                            $http.get($scope.conf.sca_api+'/task/', {params: { where: {_id: dep_taskid} }}).then(function(res) {
-                                $scope.deps[idx] = res.data[0];
-                                var status = res.data[0].status;
-                                if(status != "finished" && status != "failed" && status != "stopped") {
-                                    load_progress(red.data[0]);
-                                }
-                            }, function(res) {
-                                if(res.data && res.data.message) toaster.error(res.data.message);
-                                else toaster.error(res.statusText);
-                            })
+                //load all deps tasks (once task.deps is loaded)
+                //TODO - right now it only supports the end task and its dependencies. I need to support more complex dependencies
+                $scope.$watchCollection('task', function(task) {
+                    //only need to do once.. scaTask will refresh them
+                    if(task.deps && !$scope.tasks) {
+                        $scope.tasks = [];
+                        task.deps.forEach(function(dep) {
+                            $scope.tasks.push(scaTask.get(dep));
                         });
-                    }, function(res) {
-                        if(res.data && res.data.message) toaster.error(res.data.message);
-                        else toaster.error(res.statusText);
-                    });
-                }
-
-                function load_progress(task) {
-                    $http.get($scope.conf.progress_api+'/status/'+$scope.task.progress_key)
-                    .then(function(res) {
-                        task._progress = res.data; 
-                    }, function(res) {
-                        if(res.data && res.data.message) toaster.error(res.data.message);
-                        else toaster.error(res.statusText);
-                    });
-                }
-
-                $scope.$on("$destroy", function(event) {
-                    console.log("destroying taskdeps");
-                    stop_loading();
+                        $scope.tasks.push($scope.task); //add the leaf task as last member of deps
+                    }
                 });
 
-                /*
-                scope.$watch('user', function() {
-                    init_menu(scope, scope.menu);
-                });
-                scope.go = function(url) {
-                    document.location = url;
-                };
-                */
                 $scope.stop = function(task) {
-                    $http.put($scope.conf.sca_api+"/task/stop/"+task._id)
+                    $http.put(appconf.sca_api+"/task/stop/"+task._id)
                     .then(function(res) {
                         toaster.success("Requested to stop this task");
-                        //stop_loading();
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
                         else toaster.error(res.statusText);
@@ -113,16 +124,15 @@
                 }
 
                 $scope.rerun = function(task) {
-                    $http.put($scope.conf.sca_api+"/task/rerun/"+task._id)
+                    $http.put(appconf.sca_api+"/task/rerun/"+task._id)
                     .then(function(res) {
                         toaster.success("Requested to rerun this task");
-                        start_loading();
+                        //start_loading();
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
                         else toaster.error(res.statusText);
                     });
                 }
-
             }
         };
     });
@@ -132,8 +142,8 @@
         return {
             //restrict: 'E',
             scope: {
-                instid: '=',
-                taskid: '=',
+                instid: '<',
+                taskid: '<',
                 files: '=',
             }, 
             templateUrl: 'bower_components/sca-wf/ui/t/uploader.html', //TODO should be made configurable somehow
@@ -156,8 +166,8 @@
                     .then(function(res) {
                         scope.loaded = true;
                         scope.files = res.data.files;
-                        console.log("files loaded");
-                        console.dir(scope.files);
+                        //console.log("files loaded");
+                        //console.dir(scope.files);
                     }, function(res) {
                         scope.loaded = true;
                         if(res.data && res.data.code && res.data.code == 2) {
@@ -191,7 +201,7 @@
                             }
                         });
                         file.upload.then(function(res) {
-                            console.dir(res.data);
+                            //console.dir(res.data);
                             file.complete = true;
                             scope.files.push(res.data.file);
                             scope.$emit("file_uploaded", res.data.file);
@@ -208,7 +218,7 @@
                 }
                 scope.remove = function(file) {
                     console.dir(file);
-                    console.log("todo .. remove");
+                    alert("todo .. remove");
                 }
                 scope.download = function(file) {
                     var jwt = localStorage.getItem(appconf.jwt_id);

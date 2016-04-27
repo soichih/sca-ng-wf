@@ -24,9 +24,6 @@
         </a>
         -->
         <div class="row">
-            <div class="col-md-4">
-                <pre style="font-size: 50%;">{{task.config|json}}</pre>
-            </div>
             <div class="col-md-6"> 
                 <div ng-if="task.status != 'running' || !task._progress">
                     <small>{{task.status_msg}}</small>
@@ -48,23 +45,26 @@
                         <i class="fa fa-clock-o" aria-hidden="true"></i> Finished at <time>{{task.finish_date|date:'short'}}</time> <br></span>
                 </small></p>
             </div>
+            <div class="col-md-4">
+                <pre style="font-size: 50%;">{{task.config|json}}</pre>
+            </div>
             <div class="col-md-2" class="text-muted"> 
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-xs btn-danger" ng-click="stop(task)"
                         ng-if="task.status == 'running' || task.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
                     </button>
-                    <button type="button" class="btn btn-xs" ng-click="rerun(task)"
+                    <button type="button" class="btn btn-default btn-xs" ng-click="rerun(task)"
                         ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
                         <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
                     </button>
-                    <button type="button" class="btn btn-xs" ng-click="task._show = !task._show">
+                    <button type="button" class="btn btn-default btn-xs" ng-click="task._show = !task._show">
                         <i class="fa fa-cog" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <pre style="font-size: 50%;" ng-if="task._show">{{task|json}}</pre>
+        <pre style="font-size: 50%;" ng-if="task._show" class="slide-down">{{task|json}}</pre>
 
     </div>
 </div>

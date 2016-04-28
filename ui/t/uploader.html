@@ -1,18 +1,18 @@
 <div class="sca-wf-uploader">
-    <ul class="list-group">
+    <ul class="list-group" ng-if="best_resource">
         <li class="list-group-item" style="margin-bottom: 0px; padding: 50px; background-color: #f9f9f9;"
-        ngf-drop 
-        ngf-keep="'distinct'"
-        ng-model="newfiles" 
+        ngf-drop="uploadFiles($files)"
         ngf-drag-over-class="'dragover'" 
         ngf-accept-dir="true"
         ngf-multiple="true">
             <center>
                 <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
                 <h4>Drag files here to upload</h4>
-                <h5>Or <a href="#" ngf-keep="'distinct'" ngf-select ng-model="newfiles" multiple="multiple">choose your files</a></h5>
+                <h5>Or <a href="#" ngf-select="uploadFiles($files)" multiple="multiple">choose your files</a></h5>
             </center>
         </li>
+
+        <!--files uploaded-->
         <li class="list-group-item slide-down file-uploaded" ng-repeat="file in files" ng-click="download(file);">
             <div class="row">
                 <div class="col-md-6">{{file.name||file.filename}}</div>
@@ -21,35 +21,21 @@
                 <div class="col-md-1" style="text-align: right;" ng-click="remove(file); $event.stopPropagation()"><i class="fa fa-trash"></i></div>
             </div>
         </li>
+        
+        <!--files uploading-->
         <li class="list-group-item slide-down" 
-            ng-repeat="file in newfiles" 
+            ng-repeat="file in files_uploading" 
             ng-class="{'upload-failed': file.failed}"
             ng-if="!file.complete"
             style="background: linear-gradient(to right, #ddd {{file.progress}}%, white {{file.progress}}%);">
             <div class="row">
-                <!-- {{file.type}} -->
-                <!-- {{file.lastModified}} -->
                 <div class="col-md-6"><span ng-if="file.failed"><i class="fa fa-exclamation"></i> Failed</span> {{file.name}} {{file.$error}} {{file.$errorParam}}</div>
                 <div class="col-md-3"></div>
                 <div class="col-md-2" style="text-align: right;">{{file.size|bytes}}</div>
                 <div class="col-md-1" style="text-align: right;" ng-click="cancel_upload(file)">Cancel</div>
             </div>
         </li>
-        <!--
-        <li class="list-group-item" ng-repeat="file in errfiles" style="background-color: red;">
-            <div class="row">
-                <div class="col-md-6">{{file.name}}</div>
-                <div class="col-md-3">{{file.type}}</div>
-                <div class="col-md-3">{{file.size|bytes}}</div>
-            </div>
-        </li>
-        -->
     </ul> 
-    <p ng-if="!loaded"><i class="fa fa-spinner fa-pulse"></i> Loading uploaded files..</p>
-
-    <!--
-    Upload right away after file selection:
-    <div class="btn" ngf-select="upload($file)">Upload on file select</div>
-    <div class="btn" ngf-select="uploadFiles($files)" multiple="multiple">Upload on file select</div>
-    -->
+    <p ng-if="!best_resource" class="alert alert-warning">No resource available for file upload</p>
+    <p ng-if="best_resource && !loaded"><i class="fa fa-spinner fa-pulse"></i> Loading uploaded files..</p>
 </div>

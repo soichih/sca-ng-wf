@@ -12,8 +12,8 @@ sca-wf-taskdeps .task {
 sca-wf-taskdeps .task-status {
   font-size: 20pt;
   position: absolute;
-  left: 1px;
-  top: -12px;
+  left: 16px;
+  top: -5px;
   padding: 3px;
   border-radius: 100%;
   background-color: #ccc;

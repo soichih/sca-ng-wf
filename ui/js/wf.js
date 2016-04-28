@@ -49,17 +49,17 @@
                 if(!task.progress_key) {
                     //no key, no progress
                     //task._progress = null;
-                    return; 
+                    continue; 
                 }
                 if(task.status == "finished" || task.status == "failed" || task.status == "stopped") {
                     //if finished, no need to load progress
-                    //task._progress = null;
-                    return; 
+                    task._progress = null; //I need to clear this so that proress will be reloaded when rerun (TODO need to test this case)
+                    continue; 
                 }
                 if(task._progress && task._progress.status == "finished") {
-                    //if finished, no need to load
+                    //if progress is finished, no need to load again
                     //task._progress = null; //this causes flickering of task<>progress status because progress tends to finish before task
-                    return; 
+                    continue; 
                 }
 
                 $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
@@ -150,18 +150,21 @@
             link: function(scope, element) {
                 scope.loaded = false;
 
+                scope.files_uploading = [];
+
                 //first find the best resource to upload files to
-                var best_resource = null;
+                scope.best_resource = null;
                 $http.get(appconf.sca_api+"/resource/best", {params: {
                     service_id: "_upload",
                 }})    
                 .then(function(res) {
-                    best_resource = res.data;
+                    if(!res.data.resource) return; //no need to go further..
+                    scope.best_resource = res.data;
                     
                     //then download files that are already uploaded to the resource
                     $http.get(appconf.sca_api+"/resource/ls", {params: {
-                        resource_id: best_resource.resource._id,
-                        path: best_resource.workdir+"/"+scope.instid+"/"+scope.taskid,
+                        resource_id: scope.best_resource.resource._id,
+                        path: scope.best_resource.workdir+"/"+scope.instid+"/"+scope.taskid,
                     }})    
                     .then(function(res) {
                         scope.loaded = true;
@@ -183,25 +186,37 @@
                     else toaster.error(res.statusText);
                 });
 
+                /*
                 scope.newfiles = [];
                 scope.$watch('newfiles', function() {
+                    console.log("newfiles");
                     scope.upload(scope.newfiles);
                 });
+                */
 
                 //handles the actual file upload to the best resource found
-                scope.upload = function(files) {
-                    if(files.length == 0) return;
+                scope.uploadFiles = function(files) {
                     files.forEach(function(file) {
+                        //make sure the same name already exist
+                        var duplicate = false;
+                        scope.files.forEach(function(_file) {
+                            if(_file.filename == file.name) duplicate = true;
+                        });
+                        if(duplicate) {
+                            toaster.warning(file.name+" already exists. Please delete the original file");
+                            return;
+                        }
+
+                        scope.files_uploading.push(file);
                         file.upload = Upload.upload({
                             url: appconf.sca_api+"/resource/upload",
                             data: {
-                                resource_id: best_resource.resource._id,
-                                path: best_resource.workdir+"/"+scope.instid+"/"+scope.taskid,
+                                resource_id: scope.best_resource.resource._id,
+                                path: scope.instid+"/"+scope.taskid,
                                 file: file, 
                             }
                         });
                         file.upload.then(function(res) {
-                            //console.dir(res.data);
                             file.complete = true;
                             scope.files.push(res.data.file);
                             scope.$emit("file_uploaded", res.data.file);
@@ -217,13 +232,25 @@
                     });
                 }
                 scope.remove = function(file) {
-                    console.dir(file);
-                    alert("todo .. remove");
+                    var idx = scope.files.indexOf(file);
+                    scope.files.splice(idx, 1);
+                    $http.delete(appconf.sca_api+"/resource/file", {params: {
+                        resource_id: scope.best_resource.resource._id,
+                        path: scope.instid+"/"+scope.taskid+"/"+file.filename,
+                    }})    
+                    .then(function(res) {
+                        console.dir(res.data);
+                        //no news is good news
+                    }, function(res) {
+                        if(res.data && res.data.message) toaster.error(res.data.message);
+                        else toaster.error(res.statusText);
+                    });
+                    
                 }
                 scope.download = function(file) {
                     var jwt = localStorage.getItem(appconf.jwt_id);
-                    var path = best_resource.workdir+"/"+scope.instid+"/"+scope.taskid+"/"+file.filename;
-                    var url = appconf.sca_api+"/resource/download?r="+best_resource.resource._id+"&p="+path+"&at="+jwt;
+                    var path = scope.instid+"/"+scope.taskid+"/"+file.filename;
+                    var url = appconf.sca_api+"/resource/download?r="+scope.best_resource.resource._id+"&p="+path+"&at="+jwt;
                     window.open(url, "_blank");
                     //window.location = url;
                     console.log("download");

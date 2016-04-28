@@ -4,16 +4,13 @@
             <div class="col-md-6"> 
 
                 <div class="task-header">
-                    <span ng-switch="task.status" class="task-status">
-                        <i class="fa fa-exclamation fa-fw" aria-hidden="true" ng-switch-when="failed"></i>
-                        <i class="fa fa-stop fa-fw" aria-hidden="true" ng-switch-when="stopped"></i>
-                        <i class="fa fa-stop fa-fw" aria-hidden="true" ng-switch-when="stop_requested"></i>
-                        <i class="fa fa-check fa-fw" aria-hidden="true" ng-switch-when="finished"></i>
-                        <i class="fa fa-hourglass-start fa-fw" aria-hidden="true" ng-switch-when="requested"></i>
-                        <i class="fa fa-cog fa-spin fa-fw" aria-hidden="true" ng-switch-when="running_sync"></i>
-                        <i class="fa fa-cog fa-spin fa-fw" aria-hidden="true" ng-switch-when="running"></i>
-                        <i class="fa fa fa-fw" aria-hidden="true" ng-switch-default></i>
-                    </span>
+                    <span ng-if="task.status == 'failed'" class="task-status" style="background-color: #a94442"><i class="fa fa-exclamation fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'stopped'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'stop_requested'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'finished'" class="task-status" style="background-color: #3c763d"><i class="fa fa-check fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'requested'" class="task-status"><i class="fa fa-hourglass-start fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'running_sync'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
+                    <span ng-if="task.status == 'running'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
                     <h4>
                         <small>{{task.status|uppercase}}</small>
                         {{task.service_id}} 

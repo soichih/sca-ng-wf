@@ -6,7 +6,7 @@ sca-wf-taskdeps {
     .task-status {
         font-size: 20pt;
         position: absolute;
-        left: 16px;
+        left: 0px;
         top: -5px;
         padding: 3px;
 
@@ -29,17 +29,20 @@ sca-wf-taskdeps {
     .task:not(:last-child) .task-body-dep {
         border-left: 1px solid #ddd;
     }
-    /*
-    .clickable:hover {
+    .clickable {
         cursor: pointer;
-        background-color: #eee; 
     }
-    */
 }
 
 .sca-wf-uploader {
     .file-uploaded:hover {
         background-color: #eee;
         cursor: pointer;
+    }
+    .file {
+        color: black;
+    }
+    ul.list-group {
+        margin-bottom: 0px;
     }
 }

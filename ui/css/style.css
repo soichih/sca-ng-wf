@@ -1,18 +1,10 @@
-sca-wf-taskdeps {
-  /*
-    .clickable:hover {
-        cursor: pointer;
-        background-color: #eee; 
-    }
-    */
-}
 sca-wf-taskdeps .task {
   position: relative;
 }
 sca-wf-taskdeps .task-status {
   font-size: 20pt;
   position: absolute;
-  left: 16px;
+  left: 0px;
   top: -5px;
   padding: 3px;
   border-radius: 100%;
@@ -34,7 +26,16 @@ sca-wf-taskdeps .task-body {
 sca-wf-taskdeps .task:not(:last-child) .task-body-dep {
   border-left: 1px solid #ddd;
 }
+sca-wf-taskdeps .clickable {
+  cursor: pointer;
+}
 .sca-wf-uploader .file-uploaded:hover {
   background-color: #eee;
   cursor: pointer;
+}
+.sca-wf-uploader .file {
+  color: black;
+}
+.sca-wf-uploader ul.list-group {
+  margin-bottom: 0px;
 }

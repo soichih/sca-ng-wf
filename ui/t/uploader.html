@@ -14,7 +14,7 @@
 
         <!--files uploaded-->
         <li class="list-group-item slide-down file-uploaded" ng-repeat="file in files" ng-click="download(file);">
-            <div class="row">
+            <div class="row file">
                 <div class="col-md-6">{{file.name||file.filename}}</div>
                 <div class="col-md-3">{{file.attrs.mtime*1000|date:'medium'}}</div>
                 <div class="col-md-2" style="text-align: right;">{{file.attrs.size|bytes}}</div>
@@ -28,7 +28,7 @@
             ng-class="{'upload-failed': file.failed}"
             ng-if="!file.complete"
             style="background: linear-gradient(to right, #ddd {{file.progress}}%, white {{file.progress}}%);">
-            <div class="row">
+            <div class="row file">
                 <div class="col-md-6"><span ng-if="file.failed"><i class="fa fa-exclamation"></i> Failed</span> {{file.name}} {{file.$error}} {{file.$errorParam}}</div>
                 <div class="col-md-3"></div>
                 <div class="col-md-2" style="text-align: right;">{{file.size|bytes}}</div>
@@ -36,6 +36,7 @@
             </div>
         </li>
     </ul> 
+    <small class="text-muted"><i class="fa fa-server" aria-hidden="true"></i> {{best_resource.resource.name}}:{{best_resource.workdir}}/{{path}}</small>
     <p ng-if="!best_resource" class="alert alert-warning">No resource available for file upload</p>
     <p ng-if="best_resource && !loaded"><i class="fa fa-spinner fa-pulse"></i> Loading uploaded files..</p>
 </div>

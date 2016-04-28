@@ -12,7 +12,7 @@
         var tasks = {};
 
         function load(taskid) {
-            $http.get(appconf.sca_api+'/task/', {params: {
+            return $http.get(appconf.sca_api+'/task/', {params: {
                 where: {_id: taskid},
             }}).then(function(res) {
                 var _task = res.data[0];
@@ -76,7 +76,7 @@
                 if(tasks[taskid]) return tasks[taskid];
                 var task = {loading: true};
                 tasks[taskid] = task;
-                load(taskid);
+                task._promise = load(taskid);
                 return task;
             }
         }
@@ -101,15 +101,11 @@
                 $scope.tasks = null;
                           
                 //load all deps tasks (once task.deps is loaded)
-                //TODO - right now it only supports the end task and its dependencies. I need to support more complex dependencies
-                $scope.$watchCollection('task', function(task) {
+                $scope.task._promise.then(function() {
                     //only need to do once.. scaTask will refresh them
-                    if(task.deps && !$scope.tasks) {
+                    if(!$scope.tasks) {
                         $scope.tasks = [];
-                        task.deps.forEach(function(dep) {
-                            $scope.tasks.push(scaTask.get(dep));
-                        });
-                        $scope.tasks.push($scope.task); //add the leaf task as last member of deps
+                        load_deps($scope.task);
                     }
                 });
 
@@ -133,6 +129,20 @@
                         else toaster.error(res.statusText);
                     });
                 }
+
+                function load_deps(task) {
+                    //console.log("loading dep for "+task.service_id);
+                    if(task.deps) task.deps.forEach(function(dep_id) {
+                        //console.log("loading dep:"+dep_id);
+                        var dep = scaTask.get(dep_id);
+                        //$scope.tasks.unshift(dep); 
+                        dep._promise.then(function() {
+                            //load its deps once it's loaded
+                            load_deps(dep);
+                        });
+                    });
+                    $scope.tasks.unshift(task); 
+                }
             }
         };
     });
@@ -151,6 +161,7 @@
                 scope.loaded = false;
 
                 scope.files_uploading = [];
+                scope.files = [];
 
                 //first find the best resource to upload files to
                 scope.best_resource = null;
@@ -160,11 +171,13 @@
                 .then(function(res) {
                     if(!res.data.resource) return; //no need to go further..
                     scope.best_resource = res.data;
+                    //scope.path = scope.best_resource.workdir+"/"+scope.instid+"/"+scope.taskid,
+                    scope.path = scope.instid+"/"+scope.taskid,
                     
                     //then download files that are already uploaded to the resource
                     $http.get(appconf.sca_api+"/resource/ls", {params: {
                         resource_id: scope.best_resource.resource._id,
-                        path: scope.best_resource.workdir+"/"+scope.instid+"/"+scope.taskid,
+                        path: scope.path,
                     }})    
                     .then(function(res) {
                         scope.loaded = true;
@@ -255,6 +268,22 @@
                     //window.location = url;
                     console.log("download");
                 }
+            }
+        };
+    }]);
+
+    //task summary
+    wf.directive('scaWfTasksum', ['appconf', 'toaster', '$http',
+    function(appconf, toaster, $http) {
+        return {
+            scope: {
+                task: '=',
+            }, 
+            transclude: true,
+            templateUrl: 'bower_components/sca-wf/ui/t/tasksum.html', //TODO should be made configurable somehow
+            link: function(scope, element) {
+                //$scope.task = scaTask.get($scope.taskid);
+                scope.appconf = appconf;
             }
         };
     }]);

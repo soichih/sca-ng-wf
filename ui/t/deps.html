@@ -27,15 +27,16 @@
                         <p ng-if="task.start_date"> 
                             <i class="fa fa-clock-o" aria-hidden="true"></i> Started at <time>{{task.start_date|date:'short'}}</time>
                         </p>
+                        <p ng-if="task.finish_date"> 
+                            <i class="fa fa-clock-o" aria-hidden="true"></i> Finished at <time>{{task.finish_date|date:'short'}}</time>
+                        </p>
+
                         <p ng-if="task.progress_key">
                             <a href="{{appconf.progress_url}}/#/detail/{{task.progress_key}}" target="{{task.progress_key}}">
                             <i class="fa fa-coffee" aria-hidden="true"></i>
                             <span ng-if="task._progress.progress">{{task._progress.progress*100|number}}% Completed</span>
                             <span ng-if="!task._progress.progress">Progress</span>
                             </a>
-                        </p>
-                        <p ng-if="task.finish_date"> 
-                            <i class="fa fa-clock-o" aria-hidden="true"></i> Finished at <time>{{task.finish_date|date:'short'}}</time>
                         </p>
                     </small>
                 </div>

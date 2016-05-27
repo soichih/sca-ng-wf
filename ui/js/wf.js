@@ -131,7 +131,6 @@
                 }
 
                 function load_deps(task) {
-                    //console.log("loading dep for "+task.service_id);
                     if(task.deps) task.deps.forEach(function(dep_id) {
                         //console.log("loading dep:"+dep_id);
                         var dep = scaTask.get(dep_id);
@@ -166,7 +165,7 @@
                 //first find the best resource to upload files to
                 scope.best_resource = null;
                 $http.get(appconf.sca_api+"/resource/best", {params: {
-                    service_id: "_upload",
+                    service: "_upload",
                 }})    
                 .then(function(res) {
                     if(!res.data.resource) return; //no need to go further..

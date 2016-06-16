@@ -10,10 +10,9 @@
       
         //tasks that we are keeping up with
         var tasks = {};
-
         function load(taskid) {
             return $http.get(appconf.sca_api+'/task/', {params: {
-                where: {_id: taskid},
+                find: {_id: taskid},
             }}).then(function(res) {
                 var _task = res.data[0];
                 for(var k in _task) tasks[taskid][k] = _task[k]; //do inplace update
@@ -25,16 +24,20 @@
         }
 
         //reload tasks
-        $interval(function() {
+        console.log("sca-wf scaTask -- starting interval");
+        var reload_interval = $interval(function() {
             //console.dir(tasks);
             var ids = Object.keys(tasks);
-            var where = {_id: {$in: ids}};
-            $http.get(appconf.sca_api+'/task/', {params: {where: where}}).then(function(res) {
+            var find = {_id: {$in: ids}};
+            $http.get(appconf.sca_api+'/task/', {params: {find: find}}).then(function(res) {
                 res.data.forEach(function(task) {
                     var taskid = task._id;
                     for(var k in task) tasks[taskid][k] = task[k]; //do inplace update
                 });
             }, function(res) {
+                //TODO should I retry later instead of canceling for good?
+                $interval.cancel(reload_interval);
+
                 if(res.data && res.data.message) toaster.error(res.data.message);
                 else toaster.error(res.statusText);
             });
@@ -62,6 +65,7 @@
                     continue; 
                 }
 
+                //ok.. load progress status
                 $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
                     task._progress = res.data;
                 }, function(res) {
@@ -78,6 +82,34 @@
                 tasks[taskid] = task;
                 task._promise = load(taskid);
                 return task;
+            }
+        }
+    });
+
+    //load resource info
+    wf.factory('scaResource', function(appconf, $http, $interval, toaster) {
+        var resources = {}; //cache
+
+        function load(resourceid) {
+            return $http.get(appconf.sca_api+'/resource/', {params: {
+                find: {_id: resourceid},
+            }}).then(function(res) {
+                var _resource = res.data[0];
+                for(var k in _resource) resources[resourceid][k] = _resource[k]; //do inplace update
+                delete resources[resourceid].loading;
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }
+
+        return {
+            get: function(resourceid) {
+                if(resources[resourceid]) return resources[resourceid];
+                var resource = {loading: true};
+                resources[resourceid] = resource;
+                resource._promise = load(resourceid); 
+                return resource;
             }
         }
     });
@@ -132,11 +164,8 @@
 
                 function load_deps(task) {
                     if(task.deps) task.deps.forEach(function(dep_id) {
-                        //console.log("loading dep:"+dep_id);
                         var dep = scaTask.get(dep_id);
-                        //$scope.tasks.unshift(dep); 
                         dep._promise.then(function() {
-                            //load its deps once it's loaded
                             load_deps(dep);
                         });
                     });
@@ -234,6 +263,7 @@
                             scope.$emit("file_uploaded", res.data.file);
                         }, function(res) {
                             if(res.data && res.data.message) toaster.error(res.data.message);
+                            else if(res.status == -1) toaster.error("Upload canceled");
                             else toaster.error(res.statusText);
                             file.failed = true;
                             file.progress = 0;
@@ -266,6 +296,11 @@
                     window.open(url, "_blank");
                     //window.location = url;
                     console.log("download");
+                }
+                scope.cancel = function(file) {
+                    file.upload.abort();
+                    var idx = scope.files_uploading.indexOf(file);
+                    scope.files_uploading.splice(idx, 1);
                 }
             }
         };

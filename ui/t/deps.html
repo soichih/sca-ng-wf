@@ -16,10 +16,7 @@
         <div class="task-body task-body-dep">
             <div class="row">
                 <div class="col-md-5"> 
-                    <p class="help-block">
-                        <span ng-if="!task._progress">{{task.status_msg}}</span>
-                        <span ng-if="task._progress">{{task._progress.msg}}</span>
-                    </p>
+                    <p class="help-block">{{task.status_msg}}</p>
                     <small>
                         <p ng-if="task.request_date"> 
                             <i class="fa fa-clock-o" aria-hidden="true"></i> Requested at <time>{{task.request_date|date:'short'}}</time>
@@ -37,6 +34,7 @@
                             <span ng-if="task._progress.progress">{{task._progress.progress*100|number}}% Completed</span>
                             <span ng-if="!task._progress.progress">Progress</span>
                             </a>
+                            <small ng-if="task._progress">{{task._progress.msg}}</small>
                         </p>
                     </small>
                 </div>

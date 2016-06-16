@@ -26,7 +26,7 @@ sca-wf-taskdeps .task-body {
 sca-wf-taskdeps .task:not(:last-child) .task-body-dep {
   border-left: 1px solid #ddd;
 }
-sca-wf-taskdeps .clickable {
+sca-wf-taskdeps .clickable:hover {
   cursor: pointer;
 }
 .sca-wf-uploader .file-uploaded:hover {
@@ -38,4 +38,7 @@ sca-wf-taskdeps .clickable {
 }
 .sca-wf-uploader ul.list-group {
   margin-bottom: 0px;
+}
+.sca-wf-uploader .clickable:hover {
+  cursor: pointer;
 }

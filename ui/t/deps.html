@@ -8,9 +8,8 @@
             <span ng-if="task.status == 'running_sync'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'running'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
             <h4 style="margin-bottom: 0px;">
-                <small>{{task.status|uppercase}}</small>
-                {{task.service_id}} 
-                <br>
+                <span style="color: black;">{{task.status|uppercase}}</span>
+                <small>{{task.service}}</small>
             </h4>
         </div>
         <div class="task-body task-body-dep">

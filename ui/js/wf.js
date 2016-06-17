@@ -43,6 +43,16 @@
             });
         }, 2500);
 
+        function load_progress(task) {
+            //ok.. load progress status
+            $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
+                task._progress = res.data;
+            }, function(res) {
+                if(res.data && res.data.message) toaster.error(res.data.message);
+                else toaster.error(res.statusText);
+            });
+        }
+
         //reload progress
         $interval(function() {
             //console.dir(tasks);
@@ -65,13 +75,7 @@
                     continue; 
                 }
 
-                //ok.. load progress status
-                $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
-                    task._progress = res.data;
-                }, function(res) {
-                    if(res.data && res.data.message) toaster.error(res.data.message);
-                    else toaster.error(res.statusText);
-                });
+                load_progress(task);
             }
         }, 1000);
 

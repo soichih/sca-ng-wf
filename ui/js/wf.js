@@ -47,7 +47,7 @@
         $interval(function() {
             //console.dir(tasks);
             for(var taskid in tasks) {
-                let task = tasks[taskid];
+                var task = tasks[taskid];
 
                 if(!task.progress_key) {
                     //no key, no progress

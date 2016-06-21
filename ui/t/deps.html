@@ -65,7 +65,9 @@
                             <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
                         </button>
                         <button type="button" class="btn btn-default btn-xs" ng-click="task._show = !task._show">
-                            <i class="fa fa-cog" aria-hidden="true"></i>
+                            Debug
+                            <i class="fa fa-caret-down" aria-hidden="true" ng-show="!task._show"></i>
+                            <i class="fa fa-caret-up" aria-hidden="true" ng-show="task._show"></i>
                         </button>
                     </div>
                 </div>

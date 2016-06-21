@@ -207,8 +207,8 @@
                     scope.path = scope.instid+"/"+scope.taskid,
                     
                     //then download files that are already uploaded to the resource
-                    $http.get(appconf.sca_api+"/resource/ls", {params: {
-                        resource_id: scope.best_resource.resource._id,
+                    $http.get(appconf.sca_api+"/resource/ls/"+scope.best_resource.resource._id, {params: {
+                        //resource_id: scope.best_resource.resource._id,
                         path: scope.path,
                     }})    
                     .then(function(res) {

@@ -2,6 +2,7 @@
     'use strict';
     var wf = angular.module('sca-wf', [
         'ngFileUpload', //for scaWfUploader
+        'sca-product-raw', //to display files for each task deps
         'toaster',
     ]);
 

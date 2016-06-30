@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    var wf = angular.module('sca-wf', [
+    var wf = angular.module('sca-ng-wf', [
         'ngFileUpload', //for scaWfUploader
         'sca-product-raw', //to display files for each task deps
         'toaster',
@@ -25,7 +25,7 @@
         }
 
         //reload tasks
-        console.log("sca-wf scaTask -- starting interval");
+        console.log("sca-ng-wf scaTask -- starting interval");
         var reload_interval = $interval(function() {
             //console.dir(tasks);
             var ids = Object.keys(tasks);
@@ -128,7 +128,7 @@
                 taskid: '<', 
             },
             //templateUrl: (scaSharedConfig.shared_url||"../shared")+'/t/menutab.html', 
-            templateUrl: 'bower_components/sca-wf/ui/t/deps.html',  //TODO - should make this configurable..
+            templateUrl: 'bower_components/sca-ng-wf/ui/t/deps.html',  //TODO - should make this configurable..
             link: function ($scope, element) {
                 //$scope.show_debug = {}; //contains task ids to show details
                 $scope.task = scaTask.get($scope.taskid);
@@ -189,7 +189,7 @@
                 taskid: '<',
                 files: '=',
             }, 
-            templateUrl: 'bower_components/sca-wf/ui/t/uploader.html', //TODO should be made configurable somehow
+            templateUrl: 'bower_components/sca-ng-wf/ui/t/uploader.html', //TODO should be made configurable somehow
             link: function(scope, element) {
                 scope.loaded = false;
 
@@ -319,7 +319,7 @@
                 task: '=',
             }, 
             transclude: true,
-            templateUrl: 'bower_components/sca-wf/ui/t/tasksum.html', //TODO should be made configurable somehow
+            templateUrl: 'bower_components/sca-ng-wf/ui/t/tasksum.html', //TODO should be made configurable somehow
             link: function(scope, element) {
                 //$scope.task = scaTask.get($scope.taskid);
                 scope.appconf = appconf;

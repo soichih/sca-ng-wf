@@ -14,7 +14,6 @@
                     <i class="fa fa-caret-up" aria-hidden="true" ng-show="task._show"></i>
                 </button>
             </div>
-
             <span ng-if="task.status == 'failed'" class="task-status" style="background-color: #a94442"><i class="fa fa-exclamation fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'stopped'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'stop_requested'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
@@ -26,15 +25,11 @@
                 <span style="color: black;">{{task.status|uppercase}}</span>
                 <small>{{task.service}}</small>
             </h4>
-
-
         </div>
         <div class="task-body task-body-dep">
             <div class="row">
                 <div class="col-md-5"> 
                     <p class="help-block">{{task.status_msg}}</p>
-
-
                     <small>
                         <p ng-if="task.request_date"> 
                             <i class="fa fa-clock-o" aria-hidden="true"></i> Requested at <time>{{task.request_date|date:'short'}}</time>
@@ -83,10 +78,7 @@
                             Files</span>
                         <sca-product-raw ng-if="task.show_files" class="slide-down" taskid="task._id"></sca-product-raw>
                     </div>
-
                 </div>
-
-
             </div>
         </div><!--row-->
         <pre style="font-size: 50%;" ng-if="task._show" class="slide-down">{{task|json}}</pre>

@@ -24,7 +24,7 @@ sca-wf-taskdeps .task-body {
   padding-bottom: 10px;
 }
 sca-wf-taskdeps .task:not(:last-child) .task-body-dep {
-  border-left: 1px solid #ddd;
+  border-left: 1px dashed #ddd;
 }
 sca-wf-taskdeps .clickable:hover {
   cursor: pointer;

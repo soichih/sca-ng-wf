@@ -15,10 +15,10 @@
         <!--files uploaded-->
         <li class="list-group-item slide-down file-uploaded" ng-repeat="file in files" ng-click="download(file);">
             <div class="row file">
-                <div class="col-md-6">{{file.name||file.filename}}</div>
-                <div class="col-md-3">{{file.attrs.mtime*1000|date:'medium'}}</div>
-                <div class="col-md-2" style="text-align: right;">{{file.attrs.size|bytes}}</div>
-                <div class="col-md-1 clickable" style="text-align: right;" ng-click="remove(file); $event.stopPropagation()"><i class="fa fa-trash"></i></div>
+                <div class="col-sm-6">{{file.name||file.filename}}</div>
+                <div class="col-sm-3">{{file.attrs.mtime*1000|date:'medium'}}</div>
+                <div class="col-xs-2" style="text-align: right;">{{file.attrs.size|bytes}}</div>
+                <div class="col-xs-1 clickable" style="text-align: right;" ng-click="remove(file); $event.stopPropagation()"><i class="fa fa-trash"></i></div>
             </div>
         </li>
         

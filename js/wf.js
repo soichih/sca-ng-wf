@@ -127,8 +127,7 @@
             scope: {
                 taskid: '<', 
             },
-            //templateUrl: (scaSharedConfig.shared_url||"../shared")+'/t/menutab.html', 
-            templateUrl: 'bower_components/sca-ng-wf/ui/t/deps.html',  //TODO - should make this configurable..
+            templateUrl: 'node_modules/sca-ng-wf/t/deps.html',  //TODO - should make this configurable..
             link: function ($scope, element) {
                 //$scope.show_debug = {}; //contains task ids to show details
                 $scope.task = scaTask.get($scope.taskid);
@@ -189,7 +188,7 @@
                 taskid: '<',
                 files: '=',
             }, 
-            templateUrl: 'bower_components/sca-ng-wf/ui/t/uploader.html', //TODO should be made configurable somehow
+            templateUrl: 'node_modules/sca-ng-wf/t/uploader.html', //TODO should be made configurable somehow
             link: function(scope, element) {
                 scope.loaded = false;
 
@@ -319,7 +318,7 @@
                 task: '=',
             }, 
             transclude: true,
-            templateUrl: 'bower_components/sca-ng-wf/ui/t/tasksum.html', //TODO should be made configurable somehow
+            templateUrl: 'node_modules/sca-ng-wf/t/tasksum.html', //TODO should be made configurable somehow
             link: function(scope, element) {
                 //$scope.task = scaTask.get($scope.taskid);
                 scope.appconf = appconf;

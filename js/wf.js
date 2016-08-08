@@ -231,14 +231,6 @@
                     else toaster.error(res.statusText);
                 });
 
-                /*
-                scope.newfiles = [];
-                scope.$watch('newfiles', function() {
-                    console.log("newfiles");
-                    scope.upload(scope.newfiles);
-                });
-                */
-
                 //handles the actual file upload to the best resource found
                 scope.uploadFiles = function(files) {
                     files.forEach(function(file) {
@@ -253,6 +245,8 @@
                         }
 
                         scope.files_uploading.push(file);
+
+                        //file Upload can only use multi-part upload (instead of a simpler streaming version)
                         file.upload = Upload.upload({
                             url: appconf.sca_api+"/resource/upload",
                             data: {

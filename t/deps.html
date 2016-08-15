@@ -5,7 +5,7 @@
                     ng-if="task.status == 'running' || task.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
                 </button>
                 <button type="button" class="btn btn-default btn-xs" ng-click="rerun(task)"
-                    ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped'">
+                    ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped' || task.status == 'removed'">
                     <i class="fa fa-repeat" aria-hidden="true"></i> Rerun
                 </button>
                 <button type="button" class="btn btn-default btn-xs" ng-click="task._show = !task._show">
@@ -21,6 +21,7 @@
             <span ng-if="task.status == 'requested'" class="task-status"><i class="fa fa-hourglass-start fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'running_sync'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'running'" class="task-status"><i class="fa fa-cog fa-spin fa-fw" aria-hidden="true"></i></span>
+            <span ng-if="task.status == 'removed'" class="task-status"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></span>
             <h4 style="margin-bottom: 0px;">
                 <span style="color: black;">{{task.status|uppercase}}</span>
                 <small>{{task.service}}</small>

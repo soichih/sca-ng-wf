@@ -12,7 +12,7 @@
         //tasks that we are keeping up with
         var tasks = {};
         function load(taskid) {
-            return $http.get(appconf.sca_api+'/task/', {params: {
+            return $http.get(appconf.wf_api+'/task/', {params: {
                 find: {_id: taskid},
             }}).then(function(res) {
                 var _task = res.data[0];
@@ -30,7 +30,7 @@
             //console.dir(tasks);
             var ids = Object.keys(tasks);
             var find = {_id: {$in: ids}};
-            $http.get(appconf.sca_api+'/task/', {params: {find: find}}).then(function(res) {
+            $http.get(appconf.wf_api+'/task/', {params: {find: find}}).then(function(res) {
                 res.data.forEach(function(task) {
                     var taskid = task._id;
                     for(var k in task) tasks[taskid][k] = task[k]; //do inplace update
@@ -96,7 +96,7 @@
         var resources = {}; //cache
 
         function load(resourceid) {
-            return $http.get(appconf.sca_api+'/resource/', {params: {
+            return $http.get(appconf.wf_api+'/resource/', {params: {
                 find: {_id: resourceid},
             }}).then(function(res) {
                 var _resource = res.data[0];
@@ -144,9 +144,25 @@
                         load_deps($scope.task);
                     }
                 });
+                /*
+                $scope.$watch("task.status", function(nv, ov) {
+                    if($scope.task.status == "failed") {
+                        //load boot.log
+                        return $http.get(appconf.wf_api+'/resource/download', {params: {
+                            r: $scope.task.resource_id,
+                            p: $scope.task.instance_id+"/"+$scope.task._id+"/boot.log",
+                        }}).then(function(res) {
+                            $scope.bootlog = res.data;
+                        }, function(res) {
+                            if(res.data && res.data.message) toaster.error(res.data.message);
+                            else toaster.error(res.statusText);
+                        });
+                    }
+                });
+                */
 
                 $scope.stop = function(task) {
-                    $http.put(appconf.sca_api+"/task/stop/"+task._id)
+                    $http.put(appconf.wf_api+"/task/stop/"+task._id)
                     .then(function(res) {
                         toaster.success("Requested to stop this task");
                     }, function(res) {
@@ -156,7 +172,7 @@
                 }
 
                 $scope.rerun = function(task) {
-                    $http.put(appconf.sca_api+"/task/rerun/"+task._id)
+                    $http.put(appconf.wf_api+"/task/rerun/"+task._id)
                     .then(function(res) {
                         toaster.success("Requested to rerun this task");
                         //start_loading();
@@ -197,7 +213,7 @@
 
                 //first find the best resource to upload files to
                 scope.best_resource = null;
-                $http.get(appconf.sca_api+"/resource/best", {params: {
+                $http.get(appconf.wf_api+"/resource/best", {params: {
                     service: "_upload",
                 }})    
                 .then(function(res) {
@@ -207,7 +223,7 @@
                     scope.path = scope.instid+"/"+scope.taskid,
                     
                     //then download files that are already uploaded to the resource
-                    $http.get(appconf.sca_api+"/resource/ls/"+scope.best_resource.resource._id, {params: {
+                    $http.get(appconf.wf_api+"/resource/ls/"+scope.best_resource.resource._id, {params: {
                         //resource_id: scope.best_resource.resource._id,
                         path: scope.path,
                     }})    
@@ -248,7 +264,7 @@
 
                         //file Upload can only use multi-part upload (instead of a simpler streaming version)
                         file.upload = Upload.upload({
-                            url: appconf.sca_api+"/resource/upload",
+                            url: appconf.wf_api+"/resource/upload",
                             data: {
                                 resource_id: scope.best_resource.resource._id,
                                 path: scope.instid+"/"+scope.taskid,
@@ -274,12 +290,12 @@
                 scope.remove = function(file) {
                     var idx = scope.files.indexOf(file);
                     scope.files.splice(idx, 1);
-                    $http.delete(appconf.sca_api+"/resource/file", {params: {
+                    $http.delete(appconf.wf_api+"/resource/file", {params: {
                         resource_id: scope.best_resource.resource._id,
                         path: scope.instid+"/"+scope.taskid+"/"+file.filename,
                     }})    
                     .then(function(res) {
-                        console.dir(res.data);
+                        //console.dir(res.data);
                         //no news is good news
                     }, function(res) {
                         if(res.data && res.data.message) toaster.error(res.data.message);
@@ -290,7 +306,7 @@
                 scope.download = function(file) {
                     var jwt = localStorage.getItem(appconf.jwt_id);
                     var path = scope.instid+"/"+scope.taskid+"/"+file.filename;
-                    var url = appconf.sca_api+"/resource/download?r="+scope.best_resource.resource._id+"&p="+path+"&at="+jwt;
+                    var url = appconf.wf_api+"/resource/download?r="+scope.best_resource.resource._id+"&p="+path+"&at="+jwt;
                     window.open(url, "_blank");
                     //window.location = url;
                     console.log("download");

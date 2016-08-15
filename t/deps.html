@@ -15,7 +15,7 @@
                 </button>
             </div>
             <span ng-if="task.status == 'failed'" class="task-status" style="background-color: #a94442"><i class="fa fa-exclamation fa-fw" aria-hidden="true"></i></span>
-            <span ng-if="task.status == 'stopped'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
+            <span ng-if="task.status == 'stopped'" class="task-status" style="background-color: #aa6708"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'stop_requested'" class="task-status"><i class="fa fa-stop fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'finished'" class="task-status" style="background-color: #3c763d"><i class="fa fa-check fa-fw" aria-hidden="true"></i></span>
             <span ng-if="task.status == 'requested'" class="task-status"><i class="fa fa-hourglass-start fa-fw" aria-hidden="true"></i></span>
@@ -29,7 +29,16 @@
         <div class="task-body task-body-dep">
             <div class="row">
                 <div class="col-md-5"> 
-                    <p class="help-block">{{task.status_msg}}</p>
+                    <!--using pre instead of p if status_msg is longer than 100 chars.. (TODO - count the number of lines)-->
+                    <p class="help-block" ng-if="task.status_msg.length < 100">{{task.status_msg}}</p>
+                    <div ng-if="task.status_msg.length > 100">
+                        <br>
+                        <pre style="font-size: 70%;">{{task.status_msg}}</pre>
+                    </div>
+                    <!--
+                    <pre ng-if="bootlog">{{bootlog}}</pre>
+                    -->
+
                     <small>
                         <p ng-if="task.request_date"> 
                             <i class="fa fa-clock-o" aria-hidden="true"></i> Requested at <time>{{task.request_date|date:'short'}}</time>

@@ -15,7 +15,7 @@
             return $http.get(appconf.wf_api+'/task/', {params: {
                 find: {_id: taskid},
             }}).then(function(res) {
-                var _task = res.data[0];
+                var _task = res.data.tasks[0];
                 for(var k in _task) tasks[taskid][k] = _task[k]; //do inplace update
                 delete tasks[taskid].loading;
             }, function(res) {
@@ -31,7 +31,7 @@
             var ids = Object.keys(tasks);
             var find = {_id: {$in: ids}};
             $http.get(appconf.wf_api+'/task/', {params: {find: find}}).then(function(res) {
-                res.data.forEach(function(task) {
+                res.data.tasks.forEach(function(task) {
                     var taskid = task._id;
                     for(var k in task) tasks[taskid][k] = task[k]; //do inplace update
                 });
@@ -99,7 +99,7 @@
             return $http.get(appconf.wf_api+'/resource/', {params: {
                 find: {_id: resourceid},
             }}).then(function(res) {
-                var _resource = res.data[0];
+                var _resource = res.data.resources[0];
                 for(var k in _resource) resources[resourceid][k] = _resource[k]; //do inplace update
                 delete resources[resourceid].loading;
             }, function(res) {

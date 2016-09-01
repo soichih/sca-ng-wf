@@ -29,13 +29,13 @@
             ng-if="!file.complete"
             style="background: linear-gradient(to right, #ddd {{file.progress}}%, white {{file.progress}}%);">
             <div class="row file">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <span ng-if="file.failed"><i class="fa fa-exclamation"></i> Failed</span> 
                     {{file.name}} {{file.$error}} {{file.$errorParam}}
                 </div>
                 <div class="col-md-3"></div>
                 <div class="col-md-2" style="text-align: right;">{{file.size|bytes}}</div>
-                <div class="col-md-1 clickable" style="text-align: right;" ng-click="cancel(file)">
+                <div class="col-md-2 clickable" style="text-align: right;" ng-click="cancel(file)">
                     <span ng-if="!file.failed"><i class="fa fa-cog fa-spin"></i></span> 
                     Cancel
                 </div>

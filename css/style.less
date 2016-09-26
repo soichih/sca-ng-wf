@@ -49,3 +49,59 @@ sca-wf-taskdeps {
         cursor: pointer;
     }
 }
+
+
+.sca-sidebar-page {
+    margin-left: 80px;
+}
+.sca-sidebar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    width: 80px;
+    height: 100%;
+
+    background-color: #f0f0f0;
+    border-right: 1px solid #eee;
+    text-align: center;
+
+    .menu {
+        color: #bbb;
+        width: 80px;
+        transition: 0.5s ease all;
+        cursor: pointer;
+        margin: 3px 0px;
+        padding: 8px;
+        font-size: 8pt;
+
+        h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #777;
+        }
+        &:hover {
+            background-color: #ddd;
+            color: #008cba;
+        }
+        &:hover h3 {
+            color: #008cba;
+        }
+        &.active {
+            background-color: #008cba;
+            color: white;
+        }
+        &.active h3 {
+            color: white;
+        }
+    }
+
+    .bottom {
+        position: fixed;
+        bottom: 0px;
+        width: 80px;
+    }
+    hr {
+        margin: 5px 0px;
+    }
+}

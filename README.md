@@ -4,10 +4,9 @@ This component provides common SCA workflow UI components (angular directives)
 
 appconf (with sca standard config)
 
-* Bower requirement
+* dependencies
 
 ng-file-upload
-
 
 ## TODO
 

@@ -43,7 +43,7 @@ sca-wf-taskdeps .clickable:hover {
   cursor: pointer;
 }
 .sca-sidebar-page {
-  margin-left: 80px;
+  padding-left: 80px;
 }
 .sca-sidebar {
   position: fixed;
@@ -65,10 +65,17 @@ sca-wf-taskdeps .clickable:hover {
   padding: 8px;
   font-size: 8pt;
 }
+.sca-sidebar .menu h2 {
+  color: #878787;
+  font-weight: bold;
+  font-size: 21px;
+}
 .sca-sidebar .menu h3 {
   margin-top: 0;
   margin-bottom: 5px;
   color: #777;
+  text-transform: uppercase;
+  font-size: 18px;
 }
 .sca-sidebar .menu:hover {
   background-color: #ddd;

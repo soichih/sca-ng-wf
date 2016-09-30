@@ -145,23 +145,6 @@ wf.directive('scaWfTaskdeps', function(appconf, $http, toaster, $interval, scaTa
                     load_deps($scope.task);
                 }
             });
-            /*
-            $scope.$watch("task.status", function(nv, ov) {
-                if($scope.task.status == "failed") {
-                    //load boot.log
-                    return $http.get(appconf.wf_api+'/resource/download', {params: {
-                        r: $scope.task.resource_id,
-                        p: $scope.task.instance_id+"/"+$scope.task._id+"/boot.log",
-                    }}).then(function(res) {
-                        $scope.bootlog = res.data;
-                    }, function(res) {
-                        if(res.data && res.data.message) toaster.error(res.data.message);
-                        else toaster.error(res.statusText);
-                    });
-                }
-            });
-            */
-
             $scope.stop = function(task) {
                 $http.put(appconf.wf_api+"/task/stop/"+task._id)
                 .then(function(res) {
@@ -231,8 +214,6 @@ function(appconf, toaster, Upload, $http ) {
                 .then(function(res) {
                     scope.loaded = true;
                     scope.files = res.data.files;
-                    //console.log("files loaded");
-                    //console.dir(scope.files);
                 }, function(res) {
                     scope.loaded = true;
                     if(res.data && res.data.code && res.data.code == 2) {
@@ -331,7 +312,6 @@ function(appconf, toaster, $http) {
         transclude: true,
         templateUrl: 'node_modules/sca-ng-wf/t/tasksum.html', //TODO should be made configurable somehow
         link: function(scope, element) {
-            //$scope.task = scaTask.get($scope.taskid);
             scope.appconf = appconf;
         }
     };

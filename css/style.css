@@ -52,12 +52,12 @@ sca-wf-taskdeps .clickable:hover {
   z-index: 999;
   width: 80px;
   height: 100%;
-  background-color: #f0f0f0;
-  border-right: 1px solid #eee;
+  background-color: #eee;
+  border-right: 1px solid #ddd;
   text-align: center;
 }
 .sca-sidebar .menu {
-  color: #bbb;
+  color: #aaa;
   width: 80px;
   transition: 0.5s ease all;
   cursor: pointer;
@@ -73,7 +73,7 @@ sca-wf-taskdeps .clickable:hover {
 .sca-sidebar .menu h3 {
   margin-top: 0;
   margin-bottom: 5px;
-  color: #777;
+  color: #666;
   text-transform: uppercase;
   font-size: 18px;
 }

@@ -56,7 +56,7 @@ sca-wf-taskdeps .clickable:hover {
   text-align: center;
 }
 .sca-sidebar .menu {
-  color: #aaa;
+  color: #666;
   width: 80px;
   transition: 0.5s ease all;
   cursor: pointer;

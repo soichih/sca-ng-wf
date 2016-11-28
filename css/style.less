@@ -51,9 +51,6 @@ sca-wf-taskdeps {
 }
 
 
-.sca-sidebar-page {
-    padding-left: 80px;
-}
 .sca-sidebar {
     position: fixed;
     top: 0px;
@@ -65,6 +62,10 @@ sca-wf-taskdeps {
     border-right: 1px solid #ddd;
     text-align: center;
 
+    .subbar-opener {
+        display: none;
+    }
+
     .menu {
         color: #666;
         width: 80px;
@@ -73,6 +74,8 @@ sca-wf-taskdeps {
         margin: 0px;
         padding: 8px;
         font-size: 8pt;
+
+        color: #666;
 
         h2 {
             color: #878787;
@@ -103,9 +106,7 @@ sca-wf-taskdeps {
         &.active {
             background-color: #008cba;
             color: white;
-        }
-        &.active h3 {
-            color: white;
+            h3 { color: white; }
         }
     }
 
@@ -118,3 +119,52 @@ sca-wf-taskdeps {
         margin: 5px 0px;
     }
 }
+
+.sca-sidebar-page {
+    padding-left: 80px;
+}
+
+@media screen and (max-width: 1200px) {
+    .sca-sidebar {
+        .menu {
+            width: 40px;
+        }
+        .label {
+            display: none;
+        }
+        .bottom {
+            width: 40px;
+        }
+
+        .subbar-opener {
+            display: block;
+        }
+    }
+
+    .sca-sidebar-page {
+        .subbar {
+            display: none;
+            background-color: #fcfcfc;
+            left: 40px;
+
+            &.subbar-shown {
+                display: block;
+            }
+        }
+        .subbar-content {
+            margin-left: 0px;
+            .fixed-top {
+                left: 55px;
+                right: 15px;
+            }
+        }
+        .margin30 {
+            margin: 0px 15px;
+        }
+        .sca-sidebar-page {
+            padding-left: 40px;
+        }
+    }
+ }
+
+

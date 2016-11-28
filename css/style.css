@@ -42,9 +42,6 @@ sca-wf-taskdeps .clickable:hover {
 .sca-wf-uploader .clickable:hover {
   cursor: pointer;
 }
-.sca-sidebar-page {
-  padding-left: 80px;
-}
 .sca-sidebar {
   position: fixed;
   top: 0px;
@@ -55,14 +52,17 @@ sca-wf-taskdeps .clickable:hover {
   border-right: 1px solid #ddd;
   text-align: center;
 }
+.sca-sidebar .subbar-opener {
+  display: none;
+}
 .sca-sidebar .menu {
-  color: #666;
   width: 80px;
   transition: 0.5s ease all;
   cursor: pointer;
   margin: 0px;
   padding: 8px;
   font-size: 8pt;
+  color: #666;
 }
 .sca-sidebar .menu h2 {
   color: #878787;
@@ -101,4 +101,42 @@ sca-wf-taskdeps .clickable:hover {
 }
 .sca-sidebar hr {
   margin: 5px 0px;
+}
+.sca-sidebar-page {
+  padding-left: 80px;
+}
+@media screen and (max-width: 1200px) {
+  .sca-sidebar .menu {
+    width: 40px;
+  }
+  .sca-sidebar .label {
+    display: none;
+  }
+  .sca-sidebar .bottom {
+    width: 40px;
+  }
+  .sca-sidebar .subbar-opener {
+    display: block;
+  }
+  .sca-sidebar-page .subbar {
+    display: none;
+    background-color: #fcfcfc;
+    left: 40px;
+  }
+  .sca-sidebar-page .subbar.subbar-shown {
+    display: block;
+  }
+  .sca-sidebar-page .subbar-content {
+    margin-left: 0px;
+  }
+  .sca-sidebar-page .subbar-content .fixed-top {
+    left: 55px;
+    right: 15px;
+  }
+  .sca-sidebar-page .margin30 {
+    margin: 0px 15px;
+  }
+  .sca-sidebar-page .sca-sidebar-page {
+    padding-left: 40px;
+  }
 }

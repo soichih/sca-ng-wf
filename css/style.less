@@ -72,7 +72,7 @@ sca-wf-taskdeps {
         transition: 0.5s ease all;
         cursor: pointer;
         margin: 0px;
-        padding: 8px;
+        padding: 10px 0px;
         font-size: 8pt;
 
         color: #666;
@@ -122,6 +122,58 @@ sca-wf-taskdeps {
 
 .sca-sidebar-page {
     padding-left: 80px;
+
+    .subbar {
+        position: fixed;
+        top: 0;
+        left: 80px;
+        z-index: 998;
+        width: 350px;
+        height: 100%;
+        border-right: 1px solid #ddd;
+        
+        h2 {
+            font-size: 21px;
+            font-weight: 400;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .subbar-list {
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 350px;
+            position: fixed;
+            top: 130px;
+            bottom: 0px;
+            
+            .subbar-list-item {
+                padding: 5px 20px;
+                box-sizing: border-box;
+                border: 3px solid transparent;
+                /*box-shadow: 0px -1px 1px #eee;*/
+
+                .list-header {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: #333;
+                    margin-bottom: 0px;
+
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: #eee;
+                }
+                &.active {
+                    border: 3px solid #ddd;
+                }
+            }
+        }
+
+    }
+
+
 }
 
 @media screen and (max-width: 1200px) {

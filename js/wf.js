@@ -7,12 +7,20 @@ var wf = angular.module('sca-ng-wf', [
     'toaster',
 ]);
 
-//load tasks (and progress status) and refreshes preriodically
+//DEPRECATED 
+//just load the task via $http.get($scope.appconf.wf_api+"/task") and receive updates from
+//sca-event service using reconnectingwebsocket
+//load tasks (and progress status) and pools for update preriodically
 wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
-  
     //tasks that we are keeping up with
     var tasks = {};
     function load(taskid) {
+        if(!taskid) {
+            console.log("invalid taskid given for load function");
+            debugger;
+        }
+        //console.log("loading "+taskid);
+        //console.dir({params: { find: {_id: taskid}, }});
         return $http.get(appconf.wf_api+'/task/', {params: {
             find: {_id: taskid},
         }}).then(function(res) {

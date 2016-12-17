@@ -17,10 +17,7 @@ wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
     function load(taskid) {
         if(!taskid) {
             console.log("invalid taskid given for load function");
-            debugger;
         }
-        //console.log("loading "+taskid);
-        //console.dir({params: { find: {_id: taskid}, }});
         return $http.get(appconf.wf_api+'/task/', {params: {
             find: {_id: taskid},
         }}).then(function(res) {
@@ -80,8 +77,6 @@ wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
                 continue; 
             }
             if(task._progress && task._progress.status == "finished") {
-                //if progress is finished, no need to load again
-                //task._progress = null; //this causes flickering of task<>progress status because progress tends to finish before task
                 continue; 
             }
 

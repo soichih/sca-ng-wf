@@ -35,6 +35,7 @@ wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
     var reload_interval = $interval(function() {
         //console.dir(tasks);
         var ids = Object.keys(tasks);
+        if(ids.length == 0) return; //nothing to load
         var find = {_id: {$in: ids}};
         $http.get(appconf.wf_api+'/task/', {params: {find: find}}).then(function(res) {
             res.data.tasks.forEach(function(task) {

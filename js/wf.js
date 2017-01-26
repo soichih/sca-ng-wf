@@ -53,7 +53,7 @@ wf.factory('scaTask', function(appconf, $http, $interval, toaster) {
 
     function load_progress(task) {
         //ok.. load progress status
-        $http.get(appconf.progress_api+'/status/'+task.progress_key).then(function(res) {
+        $http.get(appconf.progress_api+'/'+task.progress_key).then(function(res) {
             task._progress = res.data;
         }, function(res) {
             if(res.data && res.data.message) toaster.error(res.data.message);

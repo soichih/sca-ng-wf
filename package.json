@@ -1,6 +1,6 @@
 {
   "name": "sca-ng-wf",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Shared angular components commonly used by various SCA web UIs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

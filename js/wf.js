@@ -170,6 +170,17 @@ wf.directive('scaWfTaskdeps', function(appconf, $http, toaster, $interval, scaTa
                 });
             }
 
+            $scope.remove = function(task) {
+                $http.delete(appconf.wf_api+"/task/"+task._id)
+                .then(function(res) {
+                    toaster.success(res.data.message);
+                }, function(res) {
+                    if(res.data && res.data.message) toaster.error(res.data.message);
+                    else toaster.error(res.statusText);
+                });
+            }
+
+
             function load_deps(task) {
                 if(task.deps) task.deps.forEach(function(dep_id) {
                     var dep = scaTask.get(dep_id);

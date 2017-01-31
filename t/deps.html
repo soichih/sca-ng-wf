@@ -4,6 +4,9 @@
                 <button type="button" class="btn btn-xs btn-danger" ng-click="stop(task)"
                     ng-if="task.status == 'running' || task.status == 'running_sync'"><i class="fa fa-stop" aria-hidden="true"></i> Stop
                 </button>
+                <button type="button" class="btn btn-default btn-xs" ng-click="remove(task)">
+                    <i class="fa fa-trash" aria-hidden="true"></i> Remove
+                </button>
                 <button type="button" class="btn btn-default btn-xs" ng-click="rerun(task)"
                     ng-if="task.status == 'failed' || task.status == 'finished' || task.status == 'stopped' || task.status == 'removed'">
                     <i class="fa fa-repeat" aria-hidden="true"></i> Rerun

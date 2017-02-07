@@ -5,6 +5,7 @@ var wf = angular.module('sca-ng-wf', [
     'ngFileUpload', //for scaWfUploader
     'sca-product-raw', //to display files for each task deps
     'toaster',
+    'ngCookies',
 ]);
 
 //DEPRECATED 
@@ -123,6 +124,64 @@ wf.factory('scaResource', function(appconf, $http, $interval, toaster) {
         }
     }
 });
+
+//moved from sca-shared.js (may still collide with it..)
+wf.factory('scaMessage', function($cookies) {
+    function getMessages() {
+        var messages = [];
+        var messages_j = sessionStorage.getItem('sca_message');
+        if(messages_j) messages = JSON.parse(messages_j);
+        return messages;
+    }
+
+    function setMessages(messages) {
+        sessionStorage.setItem('sca_message', JSON.stringify(messages));
+    }
+
+    function add(msg) {
+        var messages = getMessages();
+        //TODO - suppress duplicate messages?
+        messages.push(msg);
+        setMessages(messages);
+    }
+
+    //load messages passed via cookie
+    var messages = $cookies.get("messages");
+    if(messages) {
+        JSON.parse(messages).forEach(function(message) {
+            add(message);
+        });
+        $cookies.remove("messages", {path: "/"});
+    }
+
+    return {
+        success: function(msg) {
+            add({type: 'success', message: msg});
+        },
+        info: function(msg) {
+            add({type: 'info', message: msg});
+        },
+        error: function(msg) {
+            add({type: 'error', message: msg, showCloseButton: true, timeout: 0});
+        },
+        warning: function(msg) {
+            add({type: 'warning', message: msg});
+        },
+
+        //dump all message to toaster
+        show: function(toaster) {
+            var messages = getMessages();
+            messages.forEach(function(message) {
+                console.log("scaMessage - possing message");
+                console.dir(message);
+                toaster.pop(message.type, message.message);//, tapToDismiss: true);
+            });
+            setMessages([]);
+        }
+    };
+});
+
+
 
 //displays task status, and if there is any dependencies, displays that as well
 wf.directive('scaWfTaskdeps', function(appconf, $http, toaster, $interval, scaTask) {
@@ -342,6 +401,9 @@ wf.filter('bytes', function() {
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
     }
 });
+
+
+
 
 }()); //immediate function invocation
 
